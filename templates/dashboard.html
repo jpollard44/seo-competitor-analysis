@@ -1,0 +1,335 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - SEO Competitor Analyzer{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Summary Stats Row -->
+    <div class="row stats-summary mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>12</h3>
+                    <p>Competitors Analyzed</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-key"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>487</h3>
+                    <p>Keywords Tracked</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>24</h3>
+                    <p>Content Pieces</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-arrow-up"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>+15%</h3>
+                    <p>Ranking Improvement</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Cards -->
+    <div class="row mb-4">
+        <!-- Top Competitors Card -->
+        <div class="col-md-6 mb-4">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5>Top Competitors</h5>
+                    <a href="{{ url_for('competitors') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    <canvas id="competitorChart"></canvas>
+                    <div class="competitor-list mt-3">
+                        <div class="competitor-item">
+                            <span class="competitor-name">competitor1.com</span>
+                            <div class="competitor-metrics">
+                                <span class="badge bg-success">SEO</span>
+                                <span class="metric">DA: 45</span>
+                                <span class="metric">Overlap: 65%</span>
+                            </div>
+                        </div>
+                        <div class="competitor-item">
+                            <span class="competitor-name">competitor2.com</span>
+                            <div class="competitor-metrics">
+                                <span class="badge bg-primary">Product</span>
+                                <span class="metric">DA: 38</span>
+                                <span class="metric">Overlap: 42%</span>
+                            </div>
+                        </div>
+                        <div class="competitor-item">
+                            <span class="competitor-name">competitor3.com</span>
+                            <div class="competitor-metrics">
+                                <span class="badge bg-success">SEO</span>
+                                <span class="metric">DA: 52</span>
+                                <span class="metric">Overlap: 78%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keyword Opportunities Card -->
+        <div class="col-md-6 mb-4">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5>Keyword Opportunities</h5>
+                    <a href="{{ url_for('keywords') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    <canvas id="keywordOpportunitiesChart"></canvas>
+                    <div class="keyword-list mt-3">
+                        <div class="keyword-item high-opportunity">
+                            <span class="keyword-name">competitor analysis</span>
+                            <div class="keyword-metrics">
+                                <span class="metric">Volume: 8,500</span>
+                                <span class="metric">Difficulty: 45</span>
+                                <span class="opportunity-score">High</span>
+                            </div>
+                        </div>
+                        <div class="keyword-item medium-opportunity">
+                            <span class="keyword-name">seo tools</span>
+                            <div class="keyword-metrics">
+                                <span class="metric">Volume: 12,000</span>
+                                <span class="metric">Difficulty: 67</span>
+                                <span class="opportunity-score">Medium</span>
+                            </div>
+                        </div>
+                        <div class="keyword-item medium-opportunity">
+                            <span class="keyword-name">keyword research</span>
+                            <div class="keyword-metrics">
+                                <span class="metric">Volume: 22,000</span>
+                                <span class="metric">Difficulty: 72</span>
+                                <span class="opportunity-score">Medium</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Content Gaps Card -->
+        <div class="col-md-6 mb-4">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5>Content Gaps</h5>
+                    <a href="{{ url_for('content') }}" class="btn btn-sm btn-outline-primary">Generate Content</a>
+                </div>
+                <div class="card-body">
+                    <div class="content-gap-list">
+                        <div class="content-gap-item">
+                            <div class="gap-header">
+                                <h6>How to Analyze SEO Competitors</h6>
+                                <span class="badge bg-warning">High Priority</span>
+                            </div>
+                            <p>Competitors rank for this topic but you don't have content for it.</p>
+                            <div class="gap-metrics">
+                                <span class="metric">Ranking Competitors: 3</span>
+                                <span class="metric">Avg. Position: 4.2</span>
+                            </div>
+                        </div>
+                        <div class="content-gap-item">
+                            <div class="gap-header">
+                                <h6>Keyword Research Tools Comparison</h6>
+                                <span class="badge bg-info">Medium Priority</span>
+                            </div>
+                            <p>Popular topic with moderate competition.</p>
+                            <div class="gap-metrics">
+                                <span class="metric">Ranking Competitors: 2</span>
+                                <span class="metric">Avg. Position: 6.5</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ranking Changes Card -->
+        <div class="col-md-6 mb-4">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5>Ranking Changes</h5>
+                    <a href="{{ url_for('rank_tracker') }}" class="btn btn-sm btn-outline-primary">View Tracker</a>
+                </div>
+                <div class="card-body">
+                    <canvas id="rankingChangesChart"></canvas>
+                    <div class="ranking-changes-list mt-3">
+                        <div class="ranking-change-item positive-change">
+                            <span class="keyword-name">seo tools</span>
+                            <div class="change-metrics">
+                                <span class="change-value">+9 positions</span>
+                                <span class="current-position">Current: #3</span>
+                            </div>
+                        </div>
+                        <div class="ranking-change-item positive-change">
+                            <span class="keyword-name">competitor analysis</span>
+                            <div class="change-metrics">
+                                <span class="change-value">+8 positions</span>
+                                <span class="current-position">Current: #7</span>
+                            </div>
+                        </div>
+                        <div class="ranking-change-item positive-change">
+                            <span class="keyword-name">keyword research</span>
+                            <div class="change-metrics">
+                                <span class="change-value">+10 positions</span>
+                                <span class="current-position">Current: #10</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Competitor Chart
+        const competitorCtx = document.getElementById('competitorChart').getContext('2d');
+        const competitorChart = new Chart(competitorCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Your Site', 'Competitor Overlap', 'Unique to Competitors'],
+                datasets: [{
+                    data: [35, 40, 25],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(255, 99, 132, 0.8)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Keyword Overlap Analysis'
+                    }
+                }
+            }
+        });
+
+        // Keyword Opportunities Chart
+        const keywordCtx = document.getElementById('keywordOpportunitiesChart').getContext('2d');
+        const keywordChart = new Chart(keywordCtx, {
+            type: 'bar',
+            data: {
+                labels: ['competitor1.com', 'competitor2.com', 'competitor3.com', 'Your Site'],
+                datasets: [{
+                    label: 'Domain Authority',
+                    data: [45, 38, 52, 32],
+                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                    borderWidth: 1
+                }, {
+                    label: 'Traffic (thousands)',
+                    data: [250, 180, 320, 150],
+                    backgroundColor: 'rgba(75, 192, 192, 0.8)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Ranking Changes Chart
+        const rankingCtx = document.getElementById('rankingChangesChart').getContext('2d');
+        const rankingChart = new Chart(rankingCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+                datasets: [{
+                    label: 'Your Site',
+                    data: [12, 8, 5, 3],
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Competitor1',
+                    data: [3, 4, 4, 5],
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'transparent',
+                    tension: 0.4,
+                    borderDash: [5, 5]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        reverse: true,
+                        title: {
+                            display: true,
+                            text: 'Ranking Position'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Ranking Trends for "seo tools"'
+                    }
+                }
+            }
+        });
+
+        // Check if it's the first visit and show the wizard
+        const firstVisit = localStorage.getItem('firstVisit') !== 'false';
+        if (firstVisit) {
+            const wizardModal = new bootstrap.Modal(document.getElementById('quickStartWizard'));
+            wizardModal.show();
+            localStorage.setItem('firstVisit', 'false');
+        }
+    });
+</script>
+{% endblock %}

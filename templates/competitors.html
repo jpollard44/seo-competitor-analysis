@@ -1,0 +1,384 @@
+{% extends 'base.html' %}
+
+{% block title %}Competitor Finder - SEO Competitor Analyzer{% endblock %}
+
+{% block content %}
+<div class="competitor-finder-container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5>Find Your SEO Competitors</h5>
+                    <div class="header-actions">
+                        <button class="btn btn-sm btn-primary" id="refreshCompetitors">
+                            <i class="fas fa-sync-alt"></i> Refresh Data
+                        </button>
+                        <button class="btn btn-sm btn-success" id="compareSelected" disabled>
+                            <i class="fas fa-chart-bar"></i> Compare Selected
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="filter-bar mb-4">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <select class="form-select" id="competitorTypeFilter">
+                                    <option value="all">All Competitor Types</option>
+                                    <option value="seo">SEO Competitors</option>
+                                    <option value="product">Product Competitors</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="sortBy">
+                                    <option value="overlap">Sort by Overlap</option>
+                                    <option value="traffic">Sort by Traffic</option>
+                                    <option value="da">Sort by Domain Authority</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Search competitors..." id="competitorSearch">
+                                    <button class="btn btn-outline-secondary" type="button">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="competitorTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="selectAllCompetitors">
+                                        </div>
+                                    </th>
+                                    <th>Domain</th>
+                                    <th>Traffic</th>
+                                    <th>Keyword Overlap</th>
+                                    <th>DA</th>
+                                    <th>Type</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Competitor data will be loaded here via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5>Competitor Overlap Analysis</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="overlapChart"></canvas>
+                    <div class="chart-legend mt-3">
+                        <div class="legend-item">
+                            <span class="legend-color" style="background-color: rgba(54, 162, 235, 0.8);"></span>
+                            <span class="legend-label">Your Site</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background-color: rgba(255, 206, 86, 0.8);"></span>
+                            <span class="legend-label">Competitor Overlap</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background-color: rgba(255, 99, 132, 0.8);"></span>
+                            <span class="legend-label">Unique to Competitors</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5>Domain Authority Comparison</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="daComparisonChart"></canvas>
+                    <div class="insight-box mt-3">
+                        <div class="insight-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h6>Insight</h6>
+                            <p>Your domain authority is lower than your top competitors. Focus on building quality backlinks to improve your DA score.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5>Competitor Quick Stats</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="quick-stat">
+                                <div class="stat-label">Avg. Domain Authority</div>
+                                <div class="stat-value">45</div>
+                                <div class="stat-comparison positive">+13 vs. Your Site</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="quick-stat">
+                                <div class="stat-label">Avg. Traffic</div>
+                                <div class="stat-value">250K</div>
+                                <div class="stat-comparison positive">+100K vs. Your Site</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="quick-stat">
+                                <div class="stat-label">Avg. Keywords</div>
+                                <div class="stat-value">5,280</div>
+                                <div class="stat-comparison positive">+2,150 vs. Your Site</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="quick-stat">
+                                <div class="stat-label">Avg. Backlinks</div>
+                                <div class="stat-value">1,245</div>
+                                <div class="stat-comparison positive">+845 vs. Your Site</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Competitor Details Modal -->
+<div class="modal fade" id="competitorDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Competitor Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="competitor-details-header">
+                    <h4 id="competitorDomain">competitor1.com</h4>
+                    <div class="competitor-badges">
+                        <span class="badge bg-success">SEO Competitor</span>
+                        <span class="badge bg-info">High Priority</span>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="detail-group">
+                            <label>Domain Authority</label>
+                            <div class="detail-value">45</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-group">
+                            <label>Estimated Traffic</label>
+                            <div class="detail-value">250,000</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-group">
+                            <label>Keyword Overlap</label>
+                            <div class="detail-value">65%</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-group">
+                            <label>Total Keywords</label>
+                            <div class="detail-value">6,540</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h6 class="mt-4">Top Ranking Keywords</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Keyword</th>
+                                <th>Position</th>
+                                <th>Volume</th>
+                                <th>Your Position</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>seo tools</td>
+                                <td>3</td>
+                                <td>12,000</td>
+                                <td>12</td>
+                            </tr>
+                            <tr>
+                                <td>competitor analysis</td>
+                                <td>5</td>
+                                <td>8,500</td>
+                                <td>15</td>
+                            </tr>
+                            <tr>
+                                <td>keyword research</td>
+                                <td>7</td>
+                                <td>22,000</td>
+                                <td>20</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <h6 class="mt-4">Content Strategy</h6>
+                <p>This competitor focuses on in-depth guides and comparison articles. They publish approximately 8 articles per month, with an average word count of 2,500 words.</p>
+                
+                <div class="action-recommendations mt-4">
+                    <h6>Recommended Actions</h6>
+                    <ul>
+                        <li>Create more comprehensive content for "keyword research" to outrank them</li>
+                        <li>Analyze their backlink profile to identify link building opportunities</li>
+                        <li>Monitor their content updates for "seo tools" to stay competitive</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Add to Watchlist</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Overlap Chart
+        const overlapCtx = document.getElementById('overlapChart').getContext('2d');
+        const overlapChart = new Chart(overlapCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Your Site', 'Competitor Overlap', 'Unique to Competitors'],
+                datasets: [{
+                    data: [35, 40, 25],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(255, 99, 132, 0.8)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Keyword Overlap Analysis'
+                    }
+                }
+            }
+        });
+
+        // DA Comparison Chart
+        const daCtx = document.getElementById('daComparisonChart').getContext('2d');
+        const daChart = new Chart(daCtx, {
+            type: 'bar',
+            data: {
+                labels: ['competitor1.com', 'competitor2.com', 'competitor3.com', 'Your Site'],
+                datasets: [{
+                    label: 'Domain Authority',
+                    data: [45, 38, 52, 32],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(255, 159, 64, 0.8)',
+                        'rgba(255, 205, 86, 0.8)',
+                        'rgba(54, 162, 235, 0.8)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Domain Authority Comparison'
+                    }
+                }
+            }
+        });
+
+        // Select All Competitors
+        document.getElementById('selectAllCompetitors').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.competitor-select');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            
+            document.getElementById('compareSelected').disabled = !this.checked;
+        });
+        
+        // Filter by Competitor Type
+        document.getElementById('competitorTypeFilter').addEventListener('change', function() {
+            const type = this.value;
+            alert(`Filtering competitors by type: ${type}`);
+            // In a real app, this would filter the table
+        });
+        
+        // Sort Competitors
+        document.getElementById('sortBy').addEventListener('change', function() {
+            const sortBy = this.value;
+            alert(`Sorting competitors by: ${sortBy}`);
+            // In a real app, this would sort the table
+        });
+        
+        // Compare Selected Button
+        document.getElementById('compareSelected').addEventListener('click', function() {
+            const selectedCompetitors = document.querySelectorAll('.competitor-select:checked');
+            const domains = Array.from(selectedCompetitors).map(checkbox => checkbox.value);
+            
+            alert(`Comparing selected competitors: ${domains.join(', ')}`);
+            // In a real app, this would open a comparison view
+        });
+        
+        // Refresh Data Button
+        document.getElementById('refreshCompetitors').addEventListener('click', function() {
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+            
+            setTimeout(() => {
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
+                alert('Competitor data refreshed');
+            }, 1500);
+        });
+    });
+</script>
+{% endblock %}

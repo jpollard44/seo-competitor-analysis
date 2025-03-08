@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SEO Competitor Analyzer{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h3>SEO Analyzer</h3>
+                <div class="theme-toggle">
+                    <i class="fas fa-moon" id="dark-mode-toggle"></i>
+                </div>
+            </div>
+
+            <div class="progress-tracker">
+                <h6>Your Progress</h6>
+                <ul class="list-unstyled progress-steps">
+                    <li class="active"><i class="fas fa-check-circle"></i> Setup Complete</li>
+                    <li id="step-competitors"><i class="fas fa-circle"></i> Find Competitors</li>
+                    <li id="step-keywords"><i class="fas fa-circle"></i> Scrape Keywords</li>
+                    <li id="step-sitemaps"><i class="fas fa-circle"></i> Analyze Sitemaps</li>
+                    <li id="step-content"><i class="fas fa-circle"></i> Generate Content</li>
+                    <li id="step-rankings"><i class="fas fa-circle"></i> Track Rankings</li>
+                </ul>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li {% if request.path == '/' %}class="active"{% endif %}>
+                    <a href="{{ url_for('dashboard') }}">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                <li {% if request.path == '/competitors' %}class="active"{% endif %}>
+                    <a href="{{ url_for('competitors') }}">
+                        <i class="fas fa-users"></i> Competitor Finder
+                    </a>
+                </li>
+                <li {% if request.path == '/keywords' %}class="active"{% endif %}>
+                    <a href="{{ url_for('keywords') }}">
+                        <i class="fas fa-key"></i> Keyword Scraper
+                    </a>
+                </li>
+                <li {% if request.path == '/sitemaps' %}class="active"{% endif %}>
+                    <a href="{{ url_for('sitemaps') }}">
+                        <i class="fas fa-sitemap"></i> Sitemap Analyzer
+                    </a>
+                </li>
+                <li {% if request.path == '/content' %}class="active"{% endif %}>
+                    <a href="{{ url_for('content') }}">
+                        <i class="fas fa-file-alt"></i> Content Generator
+                    </a>
+                </li>
+                <li {% if request.path == '/rank-tracker' %}class="active"{% endif %}>
+                    <a href="{{ url_for('rank_tracker') }}">
+                        <i class="fas fa-chart-line"></i> Rank Tracker
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span>User</span>
+                </div>
+                <a href="#" class="settings-link">
+                    <i class="fas fa-cog"></i>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="content">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="page-title">
+                        <h2>{% block page_title %}{{ title }}{% endblock %}</h2>
+                    </div>
+                    <div class="ml-auto">
+                        <div class="search-bar">
+                            <input type="text" placeholder="Search...">
+                            <button><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container-fluid content-area">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <!-- First-time user wizard -->
+    <div class="modal fade" id="quickStartWizard" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Welcome to SEO Competitor Analyzer!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="wizard-step active" id="wizard-step-1">
+                        <h4>Step 1: Enter Your Website</h4>
+                        <p>Let's start by analyzing your website. Enter your domain below:</p>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">https://</span>
+                            <input type="text" class="form-control" id="user-domain" placeholder="yourdomain.com">
+                        </div>
+                    </div>
+                    <div class="wizard-step" id="wizard-step-2">
+                        <h4>Step 2: Select Your Industry</h4>
+                        <p>This helps us identify relevant competitors in your space:</p>
+                        <select class="form-select" id="user-industry">
+                            <option selected>Choose your industry</option>
+                            <option value="ecommerce">E-commerce</option>
+                            <option value="saas">SaaS</option>
+                            <option value="finance">Finance</option>
+                            <option value="healthcare">Healthcare</option>
+                            <option value="education">Education</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="wizard-step" id="wizard-step-3">
+                        <h4>Step 3: Set Your Goals</h4>
+                        <p>What are you looking to achieve?</p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="goal-rankings">
+                            <label class="form-check-label" for="goal-rankings">Improve rankings</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="goal-content">
+                            <label class="form-check-label" for="goal-content">Create better content</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="goal-competitors">
+                            <label class="form-check-label" for="goal-competitors">Understand competitors</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer wizard-navigation">
+                    <button type="button" class="btn btn-secondary" id="wizard-prev" disabled>Previous</button>
+                    <button type="button" class="btn btn-primary" id="wizard-next">Next</button>
+                    <button type="button" class="btn btn-success" id="wizard-finish" style="display: none;">Get Started</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
